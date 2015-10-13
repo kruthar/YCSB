@@ -10,4 +10,8 @@ output*
 .settings
 .checkstyle
 
+# ignore standard intellij
+.idea
+*.iml
+
 .DS_Store
