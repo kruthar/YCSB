@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+__author__ = 'kruthar'
+
+import socket
+import argparse
+import io
+import sys
+
+OPTIONS = {
+    "-p port"        : "Specify listening port"
+}
+
+def debug(message):
+    print >> sys.stderr, "[DEBUG] ", message
+
+def warn(message):
+    print >> sys.stderr, "[WARN] ", message
+
+def error(message):
+    print >> sys.stderr, "[ERROR] ", message
+
+def openSocketServer(port):
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    debug("Socket Created")
+    server.bind(('localhost', int(port)))
+    debug("Listening on %s" % port)
+    server.listen(5)
+    debug("Waiting for Connections")
+
+    server.close()
+    # while True:
+    #     (clientsocket, address) = s.accept()
+    #     client = mysocket(clientsocket)
+    #     print "Connected to: ", address
+    #     client.mysend("You Are Connected")
+    #     print "Server Recieved: ", client.myreceive()
+
+def usage():
+    output = io.BytesIO()
+    print >> output, "%s [options]" % sys.argv[0]
+
+    print >> output, "\nOptions:"
+    for option in sorted(OPTIONS.keys()):
+        print >> output, "    %s %s" % (option.ljust(14), OPTIONS[option])
+
+    return output.getvalue()
+
+def main():
+    p = argparse.ArgumentParser(
+        usage=usage(),
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument('-p', dest='port', default=3739, help="""Listening Port.""")
+
+    args, remaining = p.parse_known_args()
+
+    openSocketServer(args.port)
+
+if __name__ == '__main__':
+    sys.exit(main())
